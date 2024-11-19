@@ -1,0 +1,58 @@
+name: PR Checks
+
+# Trigger the workflow on Pull Request creation or updates
+on:
+  pull_request:
+    branches:
+      - '**' # Match all branches
+
+jobs:
+  lint:
+    name: Run ESLint and Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache Node Modules
+        uses: ./.github/actions/cache-node-modules
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Prettier
+        run: npm run format
+
+  cypress:
+    name: Run Cypress Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache Node Modules
+        uses: ./.github/actions/cache-node-modules
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start the application
+        run: npm start &
+        env:
+          CI: true # Prevent Cypress from opening a GUI in CI environments
+
+      - name: Run Cypress Tests
+        run: npx cypress run
