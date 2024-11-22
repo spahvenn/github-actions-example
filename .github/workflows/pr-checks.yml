@@ -2,13 +2,13 @@ name: PR Checks
 
 # Trigger the workflow on Pull Request creation or updates
 on:
-  pull_request:
+  push:
     branches:
-      - '**' # Match all branches
+      - '**' # Runs workflows on all branches
 
 jobs:
   lint:
-    name: Run ESLint and Prettier
+    name: Linting and Prettier Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -16,6 +16,14 @@ jobs:
 
       - name: Cache Node Modules
         uses: ./.github/actions/cache-node-modules
+
+      - name: Cache Cypress Binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -31,15 +39,15 @@ jobs:
       - name: Run Prettier
         run: npm run format
 
-  cypress:
-    name: Run Cypress Tests
+  build:
+    name: Build Application
     runs-on: ubuntu-latest
     needs: lint
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Cache Node Modules
+      - name: Restore Node Modules
         uses: ./.github/actions/cache-node-modules
 
       - name: Set up Node.js
@@ -47,13 +55,54 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
-        run: npm install
+      - name: Build Application
+        run: npm run build
 
-      - name: Start the application
-        run: npm start &
+      - name: Save Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: dist
+
+  cypress:
+    name: Run Cypress Tests
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      # Needed for Cypress to access configuration file from repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Restore Build Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: dist
+
+      - name: Restore Node Modules
+        uses: ./.github/actions/cache-node-modules
+
+      - name: Restore Cypress Binary Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Serve the Application
+        run: nohup npx serve -s dist -l 5173 &
         env:
-          CI: true # Prevent Cypress from opening a GUI in CI environments
+          CI: true # Ensure Cypress runs in a CI without GUI
+
+      - name: Wait for server to be ready
+        run: npx wait-on http://ip6-localhost:5173
+        timeout-minutes: 1
 
       - name: Run Cypress Tests
         run: npx cypress run
