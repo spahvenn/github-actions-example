@@ -1,23 +1,12 @@
-# .github/actions/cache-node-modules/action.yml
 name: 'Cache Node Modules'
-description: 'Cache npm dependencies for faster CI builds'
-inputs:
-  node-version:
-    description: 'The version of Node.js to use'
-    required: true
-    default: '20'
-runs:
-  using: "composite"
-  steps:
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ inputs.node-version }}
 
-    - name: Cache Node.js modules
+runs:
+  using: 'composite'
+  steps:
+    - name: Cache Node Modules
       uses: actions/cache@v3
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        path: node_modules
+        key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-node-
+          ${{ runner.os }}-node-modules-
