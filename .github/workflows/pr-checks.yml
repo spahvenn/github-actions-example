@@ -1,10 +1,9 @@
 name: PR Checks
 
-# Trigger the workflow on Pull Request creation or updates
 on:
   push:
-    branches:
-      - '**' # Runs workflows on all branches
+    branches-ignore:
+      - feature/deploy-to-gh-pages # TODO: change to main
 
 jobs:
   lint:
