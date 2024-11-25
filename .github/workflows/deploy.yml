@@ -3,7 +3,7 @@ name: PR Checks
 on:
   push:
     branches:
-      - feature/deploy-to-gh-pages
+      - main
 
 env:
   APP_URL: http://ip6-localhost:5173/github-actions-example
