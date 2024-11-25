@@ -1,10 +1,12 @@
 name: PR Checks
 
-# Trigger the workflow on Pull Request creation or updates
 on:
   push:
-    branches:
-      - '**' # Runs workflows on all branches
+    branches-ignore:
+      - main
+
+env:
+  APP_URL: http://ip6-localhost:5173/github-actions-example
 
 jobs:
   lint:
@@ -96,12 +98,12 @@ jobs:
           node-version: 20
 
       - name: Serve the Application
-        run: nohup npx serve -s dist -l 5173 &
+        run: nohup npm run preview -- --port 5173 &
         env:
-          CI: true # Ensure Cypress runs in a CI without GUI
+          CI: true
 
       - name: Wait for server to be ready
-        run: npx wait-on http://ip6-localhost:5173
+        run: npx wait-on ${{ env.APP_URL }}
         timeout-minutes: 1
 
       - name: Run Cypress Tests

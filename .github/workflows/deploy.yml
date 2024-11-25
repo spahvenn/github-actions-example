@@ -1,0 +1,65 @@
+name: PR Checks
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  APP_URL: http://ip6-localhost:5173/github-actions-example
+
+jobs:
+  lint-test-build:
+    name: Lint, Prettier, Build, Test, Upload Artifact
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Prettier
+        run: npm run format
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Serve the Application
+        run: nohup npm run preview -- --port 5173 &
+        env:
+          CI: true
+
+      - name: Wait for server to be ready
+        run: npx wait-on ${{ env.APP_URL }}
+        timeout-minutes: 1
+
+      - name: Run Cypress Tests
+        run: npx cypress run
+        env:
+          CYPRESS_BASE_URL: ${{ env.APP_URL }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy to Github Pages
+    needs: lint-test-build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

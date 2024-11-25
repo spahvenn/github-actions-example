@@ -1,6 +1,6 @@
 describe('Basic tests', () => {
   it('Visits the front page', () => {
-    cy.visit('http://ip6-localhost:5173');
-    cy.contains('hello');
+    cy.visit('/');
+    cy.contains('hello2');
   });
 });
