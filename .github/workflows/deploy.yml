@@ -21,26 +21,26 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-#      - name: Run ESLint
-#        run: npm run lint
-#
-#      - name: Run Prettier
-#        run: npm run format
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Prettier
+        run: npm run format
 
       - name: Build Application
         run: npm run build
 
-#      - name: Serve the Application
-#        run: nohup npx serve -s dist -l 5173 &
-#        env:
-#          CI: true
-#
-#      - name: Wait for server to be ready
-#        run: npx wait-on http://ip6-localhost:5173
-#        timeout-minutes: 1
-#
-#      - name: Run Cypress Tests
-#        run: npx cypress run
+      - name: Serve the Application
+        run: nohup npx serve -s dist -l 5173 &
+        env:
+          CI: true
+
+      - name: Wait for server to be ready
+        run: npx wait-on http://ip6-localhost:5173
+        timeout-minutes: 1
+
+      - name: Run Cypress Tests
+        run: npx cypress run
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
