@@ -103,7 +103,7 @@ jobs:
           CI: true
 
       - name: Wait for server to be ready
-        run: npx wait-on npx wait-on ${{ env.APP_URL }}
+        run: npx wait-on ${{ env.APP_URL }}
         timeout-minutes: 1
 
       - name: Run Cypress Tests
