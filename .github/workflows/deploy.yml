@@ -31,7 +31,7 @@ jobs:
         run: npm run build
 
       - name: Serve the Application
-        run: nohup npm run preview &
+        run: nohup npm run preview -- --port 5173 &
         env:
           CI: true
 
