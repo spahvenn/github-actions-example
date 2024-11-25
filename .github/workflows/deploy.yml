@@ -42,6 +42,9 @@ jobs:
       - name: CURL
         run: curl http://ip6-localhost:5173
 
+      - name: CURL
+        run: curl http://ip6-localhost:5173/github-actions-example
+
       - name: Run Cypress Tests
         run: npx cypress run
 
