@@ -31,7 +31,7 @@ jobs:
         run: npm run build
 
       - name: Serve the Application
-        run: nohup npx serve -s dist -l 5173 &
+        run: nohup npm run preview &
         env:
           CI: true
 
