@@ -95,12 +95,12 @@ jobs:
           node-version: 20
 
       - name: Serve the Application
-        run: nohup npx serve -s dist -l 5173 &
+        run: nohup npm run preview -- --port 5173 &
         env:
-          CI: true # Ensure Cypress runs in a CI without GUI
+          CI: true
 
       - name: Wait for server to be ready
-        run: npx wait-on http://ip6-localhost:5173
+        run: npx wait-on http://ip6-localhost:5173/github-actions-example
         timeout-minutes: 1
 
       - name: Run Cypress Tests

@@ -5,6 +5,9 @@ on:
     branches:
       - feature/deploy-to-gh-pages
 
+env:
+  APP_URL: http://ip6-localhost:5173/github-actions-example
+
 jobs:
   lint-test-build:
     name: Lint, Prettier, Build, Test, Upload Artifact
@@ -36,17 +39,13 @@ jobs:
           CI: true
 
       - name: Wait for server to be ready
-        run: npx wait-on http://ip6-localhost:5173/github-actions-example
+        run: npx wait-on ${{ env.APP_URL }}
         timeout-minutes: 1
-
-      - name: CURL
-        run: curl http://ip6-localhost:5173
-
-      - name: CURL
-        run: curl http://ip6-localhost:5173/github-actions-example
 
       - name: Run Cypress Tests
         run: npx cypress run
+        env:
+          CYPRESS_BASE_URL: ${{ env.APP_URL }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -62,6 +61,5 @@ jobs:
       id-token: write
 
     steps:
-      # Step 1: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
