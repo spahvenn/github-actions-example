@@ -40,7 +40,7 @@ jobs:
         timeout-minutes: 1
 
       - name: CURL
-      - run: curl http://ip6-localhost:5173
+        run: curl http://ip6-localhost:5173
 
       - name: Run Cypress Tests
         run: npx cypress run
