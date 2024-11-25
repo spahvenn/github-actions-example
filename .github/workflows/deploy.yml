@@ -7,7 +7,7 @@ on:
 
 jobs:
   lint-test-build:
-    name: Linting and Prettier Checks
+    name: Lint, Prettier, Build, Test, Upload Artifact
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -39,6 +39,9 @@ jobs:
         run: npx wait-on http://ip6-localhost:5173
         timeout-minutes: 1
 
+      - name: CURL
+      - run: curl http://ip6-localhost:5173
+
       - name: Run Cypress Tests
         run: npx cypress run
 
@@ -48,6 +51,7 @@ jobs:
           path: dist
 
   deploy:
+    name: Deploy to Github Pages
     needs: lint-test-build
     runs-on: ubuntu-latest
     permissions:
