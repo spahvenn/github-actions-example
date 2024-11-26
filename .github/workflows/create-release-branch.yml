@@ -25,10 +25,10 @@ jobs:
 
       - name: Create Release Branch
         run: |
-          git fetch develop
+          git fetch origin develop
           git checkout develop
           git pull origin develop
           git checkout -b release/0.2.0
-          git push release/0.2.0
+          git push origin release/0.2.0
 #          git checkout -b release/${{ github.event.inputs.release_version }}
 #          git push origin release/${{ github.event.inputs.release_version }}
