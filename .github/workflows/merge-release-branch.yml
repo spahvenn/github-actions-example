@@ -1,0 +1,40 @@
+name: Merge Release Branch
+on:
+  workflow_dispatch:
+    inputs:
+      release_branch:
+        description: 'Name of the release branch to merge'
+        required: true
+
+jobs:
+  merge-release-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+      - name: Merge into Master
+        run: |
+          git fetch origin
+          git checkout master
+          git pull origin master
+          git merge ${{ github.event.inputs.release_branch }} --no-ff
+          git push origin master
+
+      - name: Tag the Release
+        run: |
+          VERSION=${{ github.event.inputs.release_branch/release\// }}
+          git tag -a "v$VERSION" -m "Release $VERSION"
+          git push origin --tags
+
+      - name: Merge into Develop
+        run: |
+          git checkout develop
+          git pull origin develop
+          git merge ${{ github.event.inputs.release_branch }} --no-ff
+          git push origin develop
