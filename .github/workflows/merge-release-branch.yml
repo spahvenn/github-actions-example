@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       release_branch:
-        description: 'Name of the release branch to merge'
+        description: 'Full name of the release branch to merge (e.g., release/0.1.0)'
         required: true
 
 jobs:
@@ -18,12 +18,12 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
-      - name: Merge into main
+      - name: Merge into Main
         run: |
           git fetch origin
           git checkout main
           git pull origin main
-          git merge ${{ github.event.inputs.release_branch }} --no-ff
+          git merge --no-ff origin/${{ github.event.inputs.release_branch }}
           git push origin main
 
       - name: Tag the Release
@@ -37,5 +37,5 @@ jobs:
         run: |
           git checkout develop
           git pull origin develop
-          git merge ${{ github.event.inputs.release_branch }} --no-ff
+          git merge --no-ff origin/${{ github.event.inputs.release_branch }}
           git push origin develop
