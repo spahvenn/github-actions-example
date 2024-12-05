@@ -28,7 +28,8 @@ jobs:
 
       - name: Tag the Release
         run: |
-          VERSION=${{ github.event.inputs.release_branch/release\// }}
+          # Extract version from the release branch name (e.g., release/0.1.0 -> 0.1.0)
+          VERSION=$(echo "${{ github.event.inputs.release_branch }}" | sed 's|release/||')
           git tag -a "v$VERSION" -m "Release $VERSION"
           git push origin --tags
 
